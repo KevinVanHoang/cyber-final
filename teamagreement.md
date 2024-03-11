@@ -1,4 +1,4 @@
-# Cybersecurity Project Team Agreement - ValenTech
+# Cybersecurity Project Team Agreement - Terminators
 
 ## Team Members
 

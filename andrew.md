@@ -12,6 +12,12 @@ IP: 192.168.0.183
 
 ![What Is My IP Address](mediandrew/myIP.png)
 
+**Aggressive nmap scan**
+- `nmap -sS -A 10.0.0.82 > /home/kali/Documents/82scan.txt`
+
+**Hydra Syntax**
+- `hydra -L /home/kali/Documents/users.txt -P /home/kali/Documents/10k.txt ftp://10.0.0.82`
+
 **This is an unecessary step, but I wanted to see if it would work.**
 <!-- Activate Squid Proxy:
 - `sudo apt-get install squid`
@@ -28,6 +34,14 @@ Split the Target Range: Manually split your target range around the excluded IPs
 
 For your scenario, you could list the ranges as follows, skipping the excluded IPs: `10.0.0.1-10.0.0.5,10.0.0.7-10.0.0.99,10.0.0.104-10.0.0.133,10.0.0.135-10.0.0.175,10.0.0.177-10.0.0.254`
 
+# RDP ACCESS
+- `rdesktop -u vagrant -p vagrant 10.0.0.82`
+
+# FTP ACCESS
+- `ftp 10.0.0.82`
+- `vagrant`
+- `vagrant`
+
 **Exploit Running**
 ![exploit running](mediandrew/exploitRunning.png)
 
@@ -37,13 +51,15 @@ For your scenario, you could list the ranges as follows, skipping the excluded I
 **NMAP Scans**
 ![NMAP Scans](mediandrew/nmapscans.png)
 
-#### WordList Location in Kali
-- `/usr/share/wordlists/`
+#### WordList Location in Kali (rockyou.txt)
+- `/usr/share/wordlists/rockyou.txt`
 
 
 ## Trying to Exploit BlueKeep
 - first I ran the Nessus basic command to see if it would find the vulnerability.
   - It found the BlueKeep vulnerability on 
+
+### 
 
 
 # TOP DOWN STRAT
